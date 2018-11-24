@@ -40,8 +40,17 @@ class Aggregate:
         print '\n'
 
 def get_initial_coordinates():
-    x_coord = [ np.random.random() * box_width for i in xrange(n_particles)]
-    y_coord = [ np.random.random() * box_width for i in xrange(n_particles)]
+    x_coord = [0.0] * n_particles
+    y_coord = [0.0] * n_particles
+    i = 0
+    while i < n_particles :
+        x_coord[i] = np.random.random() * box_width
+        y_coord[i] = np.random.random() * box_width
+        for j in xrange(i):
+            if x_coord[i] - x_coord[j] >= -2.0 and x_coord[i] - x_coord[j] <= 2.0 and y_coord[i] - y_coord[j] >= -2.0 and y_coord[i] - y_coord[j] <= 2.0:
+                i -= 1
+                break
+        i += 1
     
     return x_coord, y_coord 
 
@@ -255,10 +264,24 @@ while n_aggregates > 100:
     aggregation()
     x_vel, y_vel = update_velocities(x_vel, y_vel)
 
+# output the largest aggregate to show in paraview
+m_max = 0
+index_max = 0
 for m in xrange(n_particles):
-    if aggregate_list[m].mParticle > 50 :
+    if m_max < aggregate_list[m].mParticle :
+        m_max = aggregate_list[m].mParticle
+        index_max = m
+print aggregate_list[index_max].mParticle
+for i in aggregate_list[index_max].index_list :
+    print '%f %f %d' % (x_coord[i], y_coord[i], i)
+'''
+'''
+# output information of some aggregates to estimate their fractal dimension
+for m in xrange(n_particles):
+    if aggregate_list[m].mParticle > 5 :
         print "%f %d" % (aggregate_list[m].R_g, aggregate_list[m].mParticle)
 '''
+# for presentation
 fig, ax = plt.subplots()
 ## plot a final pictrue
 # coord = plt.plot(x_coord, y_coord, 'ro')
@@ -266,7 +289,7 @@ fig, ax = plt.subplots()
 # plt.plot([0, box_width, box_width, 0, 0], [0, 0, box_width, box_width, 0])
 
 # ani = animation.FuncAnimation(fig, refresh, frames=100, interval=10, repeat=True)    # a repeat anime
-ani = animation.FuncAnimation(fig, refresh, frames=n_steps, interval=50, repeat=True)
+ani = animation.FuncAnimation(fig, refresh, frames=n_steps, interval=50, repeat=False)
 ax.set_aspect(1.0)
 
 plt.show()

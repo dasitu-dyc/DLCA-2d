@@ -81,14 +81,13 @@ def update_coordinates(x_coord, y_coord):
                 y_coord[i] += y_vel[i] * dt
 
             aggregate_list[m].update_mass_center()
-
-        xc = aggregate_list[m].mass_center[0]
-        yc = aggregate_list[m].mass_center[1]
-        # artificial velocity to move the aggregates forword to the center of box
-        if xc < 0.0 or xc > box_width or yc < 0.0 or yc > box_width :
-            displacment = aggregate_list[m].mass_center - center
-            revised_disp = - k3 * 0.5 * displacment / np.linalg.norm(displacment) * dt
-            aggregate_list[m].move(revised_disp)
+            xc = aggregate_list[m].mass_center[0]
+            yc = aggregate_list[m].mass_center[1]
+            # artificial velocity to move the aggregates forword to the center of box
+            if xc < 0.0 or xc > box_width or yc < 0.0 or yc > box_width :
+                displacment = aggregate_list[m].mass_center - center
+                revised_disp = - k3 * 0.5 * displacment / np.linalg.norm(displacment) * dt
+                aggregate_list[m].move(revised_disp)
 
     return x_coord, y_coord
 
